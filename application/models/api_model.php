@@ -3,11 +3,8 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 
-class api_model extends CI_Model {
+class Api_Model extends CI_Model {
 
-	/**
-	* [__construct description]
-	*/
 	function __construct() {
 		parent::__construct();
 
@@ -15,14 +12,7 @@ class api_model extends CI_Model {
 		$this->_table  = 'mhipo_reunion';
 	}
 	
-	/**
-    * Obtener los datos del usuario
-    *
-    * @access public
-    * @param  date $fecha
-    * @return array
-    */
-	public function getReunion($fecha)
+	public function getMeeting($fecha)
 	{
 		//Obtenemos todas las carreras para la fecha de reunion recibida por parametros
 	    $sql = "SELECT mc.id, mc.nombre, mc.idReunion, mc.nroCarrera, mc.nroLlamado,
@@ -37,10 +27,10 @@ class api_model extends CI_Model {
 
 		foreach( $result->result() as $row )
 	    {
-	    	$id_reunion 	= (int)$row->idReunion;
-	    	$fecha_reunion  = $row->fecha;
+	    	$meeting_id 	= (int)$row->idReunion;
+	    	$meteeng_date  	= $row->fecha;
 	    	//cargamos los premios del id carrera
-			$premios      = $this->getPremios((int)$row->id);
+			$awards      = $this->getPremios((int)$row->id);
 			// obtenemos los competidores del id carrera
 			$competidores = $this->getCompetidores((int)$row->id);
 
@@ -88,7 +78,7 @@ class api_model extends CI_Model {
 		    						"tiempo" 		=> array( "minutos"	 => $minutos,
 		    												  "segundos" => $segundos,
 		    												  "decimas"  => $decimas),
-		    						"premios" 	=> array($premios),
+		    						"premios" 	=> array($awards),
 		    						"video" 	=> null,
 		    						"competidores_cantidad" 	=> null,
 		    						"competidores"	=> array($competidores)
@@ -109,14 +99,7 @@ class api_model extends CI_Model {
 	    return $reunion;
 	}
 
-	/**
-    * Obtener los premios cargados para el id carrera
-    *
-    * @access private
-    * @param  int $id
-    * @return array
-    */
-	private function getPremios($id)
+	private function getAwards($id)
 	{
 		//traemos los premios de la carrera
     	$sql = "SELECT mp.id, mp.monto, mp.nroPremio 
@@ -127,19 +110,12 @@ class api_model extends CI_Model {
 
 		foreach( $r_premios->result() as $row_premio )
 	    {
-	    	$premios [] =  array("puesto"  => $row_premio->nroPremio,
+	    	$awards [] =  array("puesto"  => $row_premio->nroPremio,
 	    					  	 "importe" => $row_premio->monto);
 	    }
-	    return $premios;
+	    return $awards;
 	}
 
-	/**
-    * Obtenemos los competidores de la carrera
-    *
-    * @access private
-    * @param  int $id
-    * @return array
-    */
 	private function getCompetidores($id)
 	{
 		//traemos los premios de la carrera

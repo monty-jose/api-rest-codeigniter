@@ -14,11 +14,8 @@ class Api extends REST_Controller {
 	public function __construct() {
         parent::__construct();
 		
-        // $this->load->database();
-        // $this->load->helper('url');
-        $this->_user = 'studbook';
-		$this->_pass = 'hipodromo2020';
-        //cargamos la libreria de json web token
+        $this->_user = '';
+		$this->_password = '';
         $this->load->helper(['jwt', 'authorization','date']); 
     }
 
@@ -76,24 +73,20 @@ class Api extends REST_Controller {
 	*/
 	private function verify_request()
 	{
-	    // Use try-catch
 	    try 
 	    {
-	    	// Accedemos al header
+	    	
 	    	$headers = $this->input->request_headers();
-	    	//Si esta seteado el token
+	    	
 	    	if(isset($headers['Authorization']))
 	    	{
-	    		// Extraemos el token
-		    	$token = $headers['Authorization'];
-		        //Si es una valdacion sin tiempo de caducidad
-		        /* $data = AUTHORIZATION::validateToken($token);*/
-		        $data = AUTHORIZATION::validateTimestamp($token);
+	    		
+		    	$token 	= $headers['Authorization'];		        
+		        $data 	= AUTHORIZATION::validateTimestamp($token);
 
-		        // Si el token es valido retornamos el user data, si no retorna false
 		        if ($data === false) 
 		        {
-					$status   =  401;//REST_Controller::HTTP_UNAUTHORIZED;// response hhtp sin autorizacion
+					$status   =  401;
 					$response = ['status' => $status, 'msg' => 'Acceso no autorizado'];
 		            $this->response($response, $status);
 		            exit();
@@ -115,45 +108,26 @@ class Api extends REST_Controller {
 	    }
 	}
 
-	/**
-	* Funcion get la cual va a retornar el resultado de la peticion.
-	*
-	* @access public
-	* @return response
-	*/
 	public function datos_get()
 	{
-	    //verificamos que la peticion sea valida
 	    $data = $this->verify_request();
 
-	    // Enviamos el ok
 	    $status = 200;//REST_Controller::HTTP_OK;
 	    $response = ['status' => $status, 'data' => $data];
 	    $this->response($response, $status);
 	}
 
-
-	/**
-	* Funcion que retorna los datos actuales de la reunion
-	*
-	* @access public
-	* @return reunion
-	*/
-	public function reunion_get($fecha)
+	public function Meeting_get($fecha)
 	{
 		try 
 	    {
-		    //verificamos que la peticion sea valida
 		    $this->verify_request();
-
-		    // cargamos el modelo
 	    	$this->load->model("api_model");
 
 	    	$data = $this->api_model->getReunion($fecha);
 
-		    // Enviamos el ok
-		    $status = 200;//REST_Controller::HTTP_OK;
-		    $response = ['status' => $status, 'data' => $data];
+		    $status 	= 200;
+		    $response 	= ['status' => $status, 'data' => $data];
 		    $this->response($response, $status);
 		}
 		catch (Exception $e) 
